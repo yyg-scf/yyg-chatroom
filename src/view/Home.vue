@@ -1,5 +1,9 @@
 <template>
   <div class="home">
+    <header>
+      <div class="header_left">放肆的聊天吧，没人知道嘿嘿</div>
+      <div class="header_right">{{ timeState.nowTime }}</div>
+    </header>
     <div class="room_box">
       <div class="show_message">
         <div v-for="(item,index) in msgList" :key="index" :class="item.type">
@@ -24,15 +28,36 @@
         <el-button type="primary" @click="sendMessage">发送</el-button>
       </div>
     </div>
+
+    <!-- 组件中心 -->
+    <div class="component_list">
+      <div class="list_item" v-for="item in navList" :key="item.id" @click="router.push({ name: item.routerName })">{{ item.name }}</div>
+    </div>
   </div>
 </template>
 <script>
-import { ref, reactive } from "vue"
+import { ref, onBeforeUnmount, reactive } from "vue"
+import { useRouter } from "vue-router"
+import moment from "moment"
 export default {
   setup() {
     let message = ref(""); // 发送的信息
     const msgList = reactive([]); // 信息列表
     let socket = reactive({});
+    const router = useRouter();
+    const timeState = reactive({
+      nowTime: "",
+      timeId: null,
+    });
+    const getNowTime = () => {
+      timeState.timeId = setInterval(() => {
+        timeState.nowTime = moment().format("YYYY年MM月DD日 HH时mm分ss秒");
+      }, 1000);
+    };
+    getNowTime();
+    onBeforeUnmount(() => {
+      clearInterval(timeState.timeId);
+    })
     const loginId = window.sessionStorage.getItem("loginId");
 
     const websocket = () => {
@@ -53,23 +78,42 @@ export default {
         message.value = "";
       }
     }
-    return { sendMessage, message, msgList, socket }
+
+    const navList = reactive([
+      { name: "组件中心", id: "1", routerName: "componentCenter" },
+      { name: "俞泳高的个人履历", id: "2", routerName: "resume" },
+    ])
+    return { timeState, sendMessage, message, msgList, socket, navList, router }
   }
 }
 </script>
 <style lang="scss" scoped>
 .home {
+  position: relative;
   width: 100%;
   height: 100vh;
   overflow: hidden;
   background-image: url("../assets/chat_bg.jpg");
   background-size: 100% 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  color: #fff;
+  header {
+    height: 60px;
+    padding: 0 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    .header_left {
+      font-size: 26px;
+      font-weight: 700;
+    }
+  }
   .room_box {
+    position: absolute;
+    top: 50%;
+    left: 50%;
     width: 50%;
     height: 70%;
+    transform: translate(-50%, -50%);
     border: 1px solid #ccc;
     .show_message {
       height: 66%;
@@ -108,6 +152,26 @@ export default {
       }
       :deep().el-button {
         width: 100%;
+      }
+    }
+  }
+  .component_list {
+    position: absolute;
+    right: 20px;
+    top: 50%;
+    width: 200px;
+    border: 1px solid #ccc;
+    transform: translateY(-50%);
+    .list_item {
+      height: 40px;
+      line-height: 40px;
+      border-bottom: 1px solid #ccc;
+      cursor: pointer;
+      &:nth-last-child(1) {
+        border: none;
+      }
+      &:hover {
+        background-color: #5fb878;
       }
     }
   }
