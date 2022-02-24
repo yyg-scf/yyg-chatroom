@@ -3,11 +3,11 @@ const uuid = require("uuid");
 let qs = require('qs');
 const clients = []; //创建客户端列表，用于保存客户端及相关连接信息
 const UserDB = require("../db/UserDB");
-const fs = require("fs");
 
 
 const wss = new WebSocket.Server({ port: 3030 });
 wss.on('connection', function (ws, req) {
+  console.log("开始建立连接了");
   const client_uuid = uuid.v4();
   const loginId = (qs.parse(req.url.split('?')[1])).loginId;
   UserDB.find({ userId: loginId }, (err, data) => {
@@ -24,8 +24,12 @@ wss.on('connection', function (ws, req) {
       });
       ws.on("message", function (message) { // 这里的msg是buffer类型的，和空字符串相加才是字符串
         console.log('收到' + '的消息：' + message);
-        let msg = message + ""
+        let msg = message + "";
         broadcastSend('user', msg, nickname, client_uuid, imgPath);
+      })
+      ws.on("close", () => {
+        ws.close()
+        console.log("websocket服务要断开连接了");
       })
     }
   })

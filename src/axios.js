@@ -29,7 +29,7 @@ instance.interceptors.request.use( (config)=> {
 });
 
 // 添加相应拦截器
-axios.interceptors.response.use((response) => {
+instance.interceptors.response.use((response) => {
   return response;
 }, (error) => {
   // 对请求错误做些什么

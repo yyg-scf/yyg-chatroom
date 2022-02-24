@@ -63,6 +63,10 @@ export default {
     const userRegister = () => {
       registerFormRef.value.validate((valid) => {
         if (valid) {
+          if(!fileInfo.file) {
+            ElMessage.error({ message: "请上传图片", duration: 1000 });
+            return;
+          }
           const fd = new FormData();
           fd.append("userName", registerForm.userName);
           fd.append("password", registerForm.password);

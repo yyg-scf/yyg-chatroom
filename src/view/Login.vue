@@ -16,10 +16,10 @@
           label-position="left"
         >
           <el-form-item label="账号" prop="userName">
-            <el-input v-model="loginForm.userName" placeholder="请输入账号"></el-input>
+            <el-input v-model="loginForm.userName" placeholder="请输入账号" @keydown.enter="userLogin"></el-input>
           </el-form-item>
           <el-form-item label="密码" prop="password">
-            <el-input v-model="loginForm.password" placeholder="请输入密码" show-password></el-input>
+            <el-input v-model="loginForm.password" placeholder="请输入密码" show-password @keydown.enter="userLogin"></el-input>
           </el-form-item>
         </el-form>
       </div>

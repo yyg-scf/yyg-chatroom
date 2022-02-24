@@ -57,6 +57,7 @@ export default {
     getNowTime();
     onBeforeUnmount(() => {
       clearInterval(timeState.timeId);
+      socket.close(); // 离开当前网页关闭websocket
     })
     const loginId = window.sessionStorage.getItem("loginId");
 
@@ -69,6 +70,9 @@ export default {
         let value = JSON.parse(data.data);
         msgList.push(value)
       }
+      socket.onclose = () => {
+        console.log("我要关闭websocket了");
+      }
     }
     websocket();
 
@@ -80,8 +84,7 @@ export default {
     }
 
     const navList = reactive([
-      { name: "组件中心", id: "1", routerName: "componentCenter" },
-      { name: "俞泳高的个人履历", id: "2", routerName: "resume" },
+      { name: "俞泳高的个人可视化", id: "1", routerName: "myVisualization" }
     ])
     return { timeState, sendMessage, message, msgList, socket, navList, router }
   }
